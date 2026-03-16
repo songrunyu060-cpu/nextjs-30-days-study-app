@@ -1,36 +1,116 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+## 项目简介
 
-## Getting Started
+本项目是一个融合 **传统纸质图书管理** 与 **现代 AI 技术** 的图书管理系统，旨在探索纸质书在数字时代中的新价值与新形态。通过引入智能检索、个性化推荐以及智能编目等功能，让图书馆（或个人藏书）的管理更加高效，同时保留纸质阅读独有的仪式感与沉浸体验。
 
-First, run the development server:
+## 项目定位
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- **纸质书的数字化“助手”**：不是简单地把书变成电子文件，而是围绕纸质书的“存在”和“使用场景”提供智能服务。
+- **AI 驱动的知识入口**：利用自然语言搜索、向量检索等技术，让用户可以用接近人类语言的方式去“问书”和“找书”。
+- **学习与研究的基础设施**：为未来扩展阅读笔记、知识图谱、学习路径推荐等功能打下基础。
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 核心功能构想
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- **图书信息管理**
+  - 支持录入纸质图书的基本信息（书名、作者、ISBN、出版社、分类等）
+  - 支持扫码（或手动）录入并自动从公开接口获取图书元数据
+  - 支持库存数量、馆藏位置等信息管理
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- **智能检索与推荐**
+  - 支持按书名、作者、标签、分类等多维度检索
+  - 通过 AI 理解用户的自然语言提问，例如：“我想找一些关于人工智能入门的书”
+  - 基于阅读记录和借阅历史，提供个性化推荐列表
 
-## Learn More
+- **借阅与归还流程**
+  - 支持用户账号体系，记录借阅历史
+  - 借出、归还、续借的状态流转
+  - 逾期提醒与阅读周期统计
 
-To learn more about Next.js, take a look at the following resources:
+- **AI 辅助知识服务（可逐步扩展）**
+  - 针对某本书生成简介、阅读建议、难度评估
+  - 基于书目构建主题阅读清单，例如“机器学习入门书单”
+  - 联合多本书回答知识性问题，为用户提供“图书级”的问答服务
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 纸质书与 AI 结合的理念
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+在电子书与碎片化信息高度发达的今天，纸质书依然在 **深度思考、长时间专注阅读** 方面具有不可替代的优势。本项目希望通过 AI 技术：
 
-## Deploy on Vercel
+- 让“找到一本适合此刻的纸质书”变得更容易
+- 让“管理和维护大量纸质藏书”变得更轻松
+- 让“纸质书里的知识”更容易被搜索、被联结、被重新利用
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+从而实现：**用 AI 保护纸质书的价值，而不是取代纸质书本身。**
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 技术栈概览（可根据实际情况调整）
+
+- **前端 / 应用层**：Next.js App Router，React 生态
+- **UI 组件**：Tailwind CSS + 自定义 UI 组件库
+- **数据层**：Prisma / 数据库（如 PostgreSQL 或 MySQL）
+- **AI 能力**：向量检索、嵌入模型、LLM 接口（如 OpenAI / 本地模型）
+- **部署与运维**：根据实际部署环境补充（Vercel、自建服务器等）
+
+## 角色与权限
+
+- **管理员**
+  - 管理系统内的全部图书数据（新增 / 编辑 / 下架等）。
+  - 审核和管理用户账号与权限。
+  - 查看和配置数据面板中的统计指标（如热门图书、排行榜等）。
+  - 维护系统参数（如分类体系、标签体系等）。
+
+- **普通用户**
+  - 注册登录后可浏览图书、发起借阅和归还操作。
+  - 查看个人借阅记录和读书笔记。
+  - 使用 AI 寻书、AI 问书等智能功能获得推荐与问答。
+  - 后续可参与评分、评论等交互行为（可选扩展）。
+
+## 适用场景
+
+- 个人藏书管理、家庭图书角
+- 小型工作室、学习社群的共享书架
+- 中小型图书馆或机构内部资料室
+- 需要将纸质书“结构化管理 + 智能检索”的任何场景
+
+---
+
+后续可以在本 `README` 中继续补充：安装步骤、运行方式、接口文档、UI 预览截图等内容。
+
+## 功能模块规划
+
+1. **登录注册模块**
+   - 支持用户注册、登录、退出登录等基础账号功能。
+   - 为后续借阅记录、读书笔记、个性化推荐等提供用户身份基础。
+
+2. **数据面板（Dashboard）**
+   - 展示系统的整体数据概览和运营情况。
+   - 包括但不限于：
+     - 最受欢迎的图书（借阅次数 / 收藏次数等维度）
+     - 每月读书最多的用户排行榜
+     - 各个图书类型最受欢迎 Top 10（如：文学、技术、历史、社科等）
+   - 支持按时间范围、分类等维度进行筛选与统计。
+
+3. **图书列表模块**
+   - 展示当前系统中的全部纸质图书。
+   - 支持搜索、筛选、排序（如按出版时间、借阅次数、评分等）。
+   - 可查看图书详情页：包含基本信息、馆藏位置、可借副本数量等。
+
+4. **图书租借记录模块**
+   - 记录用户的借阅、归还、续借等操作历史。
+   - 支持按用户、图书、时间范围进行筛选。
+   - 便于统计单本图书的周转率和某个用户的阅读行为。
+
+5. **AI 相关模块**
+   - **AI 寻书**：用户可以用自然语言描述需求（例如“想看一些科幻但比较轻松的小说”），系统根据图书标签、简介和向量检索结果给出推荐。
+   - **AI 问书**：围绕某本或多本书进行问答，例如“这本书主要讲了什么？”、“有没有适合入门机器学习的章节？”等，为用户提供基于图书内容和元数据的智能问答。
+
+6. **读书笔记模块**
+   - 支持用户为某本书创建、编辑、删除读书笔记。
+   - 支持按书籍、时间、标签查看笔记，便于复习与整理。
+   - 后续可与 AI 结合，做笔记总结、生成思维导图或知识点提炼。
+
+7. **电子书模块（暂不实现）**
+   - 规划为未来对接电子书资源的入口，例如上传或关联 EPUB/PDF 等格式。
+   - 当前阶段不实现，仅在整体架构设计中预留位置。
+
+8. **AI 听书模块（暂不实现）**
+   - 规划为未来对接 TTS（文本转语音）或有声书资源的模块。
+   - 可针对部分书籍提供“听书”模式，提升碎片时间利用率。
+   - 当前阶段不实现，后续可根据实际需求逐步迭代。

@@ -14,11 +14,6 @@ function getSql() {
   return neon(databaseUrl);
 }
 
-export async function getData() {
-  const sql = getSql();
-  return await sql`select 1 as ok`;
-}
-
 export async function createRandomUser(_formData: FormData): Promise<void> {
   const sql = getSql();
   const email = `test-${crypto.randomUUID()}@test.com`;
