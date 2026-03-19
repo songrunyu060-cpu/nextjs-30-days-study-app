@@ -1,3 +1,5 @@
+export const revalidate = 60;
+
 async function getBooks() {
   // 模拟一个 3 秒的延迟
   await new Promise((resolve) => setTimeout(resolve, 3000));
@@ -14,6 +16,7 @@ export default async function BooksPage() {
           <li key={book}>{book}</li>
         ))}
       </ul>
+      <p>{new Date().getSeconds()}</p>
     </div>
   );
 }
