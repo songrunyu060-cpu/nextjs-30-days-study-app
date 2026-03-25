@@ -48,7 +48,7 @@ export function UserList({ users, filterQuery = "" }: Props) {
               <td className="px-4 py-3">
                 <div className="flex flex-wrap items-center gap-3">
                   <Link
-                    href={`/users-5?edit=${user.id}${qParam}`}
+                    href={`/users?edit=${user.id}${qParam}`}
                     className="text-blue-600 underline-offset-2 hover:underline"
                   >
                     编辑

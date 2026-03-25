@@ -11,7 +11,7 @@ export default function NavLinks() {
     { name: "首页", href: "/" },
     { name: "图书列表", href: "/books" },
     { name: "用户列表", href: "/users" },
-    { name: "用户列表_第五天学习", href: "/users-5" },
+    { name: "用户列表_第五天学习", href: "/users" },
   ];
 
   return (

@@ -8,7 +8,6 @@ import {
   Dialog,
   DialogClose,
   DialogContent,
-  DialogDescription,
   DialogTitle,
 } from "@/components/ui/dialog";
 
@@ -22,7 +21,7 @@ export function UserModal({ editingUser, open, closeHref }: Props) {
   const [state, formAction, isPending] = useActionState(saveUserAction, null);
 
   const isEdit = editingUser != null;
-  const href = closeHref ?? "/users-5";
+  const href = closeHref ?? "/users";
 
   const form = (
     <form action={formAction} className="space-y-5">
@@ -37,7 +36,6 @@ export function UserModal({ editingUser, open, closeHref }: Props) {
             : "填写信息以创建新用户"}
         </p>
       </div>
-
       <div>
         <label className="mb-1.5 block text-sm font-medium">姓名</label>
         <input
@@ -48,7 +46,6 @@ export function UserModal({ editingUser, open, closeHref }: Props) {
           className="w-full rounded-lg border px-4 py-2 outline-none transition-all focus:ring-2 focus:ring-blue-500"
         />
       </div>
-
       <div>
         <label className="mb-1.5 block text-sm font-medium">邮箱</label>
         <input
@@ -60,7 +57,6 @@ export function UserModal({ editingUser, open, closeHref }: Props) {
           className="w-full rounded-lg border px-4 py-2 outline-none transition-all focus:ring-2 focus:ring-blue-500"
         />
       </div>
-
       <button
         type="submit"
         disabled={isPending}
@@ -68,13 +64,11 @@ export function UserModal({ editingUser, open, closeHref }: Props) {
       >
         {isPending ? "保存中…" : isEdit ? "保存修改" : "立即创建"}
       </button>
-
       {state?.success === true && (
         <div className="rounded-lg bg-green-50 p-3 text-center text-sm text-green-700">
           {state.isUpdate ? "✅ 修改已保存" : "✅ 用户创建成功！"}
         </div>
       )}
-
       {state?.error && (
         <div className="rounded-lg bg-red-50 p-3 text-center text-sm text-red-700">
           ❌ {state.error.toString()}
@@ -83,7 +77,6 @@ export function UserModal({ editingUser, open, closeHref }: Props) {
     </form>
   );
 
-  // open=false 时作为“创建用户”的内联表单渲染；open=true 时用 Radix Dialog 做弹窗
   if (!open) return form;
 
   return (
@@ -106,9 +99,6 @@ export function UserModal({ editingUser, open, closeHref }: Props) {
           <DialogTitle className="mb-2 text-xl font-bold">
             {isEdit ? "快速编辑用户" : "新增用户"}
           </DialogTitle>
-          <DialogDescription>
-            在弹窗中修改用户信息后，列表会自动刷新。
-          </DialogDescription>
           {form}
         </DialogContent>
       </Dialog>

@@ -1,7 +1,4 @@
-import {
-  userCreateSchema,
-  userUpdateSchema,
-} from "@/schema";
+import { userCreateSchema, userUpdateSchema } from "@/schema";
 import { saveUserService } from "@/features/user/user.service";
 
 function omitEmptyStrings(obj: Record<string, unknown>) {
@@ -18,26 +15,20 @@ export async function saveUserUseCase(rawData: unknown) {
   if (!rawData || typeof rawData !== "object") {
     throw new Error("VALIDATION_FAILED");
   }
-
   const obj = { ...(rawData as Record<string, unknown>) };
   const idRaw = obj.id;
-  const id =
-    idRaw !== undefined && idRaw !== null && String(idRaw).trim() !== ""
-      ? String(idRaw)
-      : undefined;
+  const id = Boolean(idRaw) ? String(idRaw) : undefined;
   delete obj.id;
-
-  // 1. 统一校验；带 id 视为更新（字段可为部分，空串视为“不修改该字段”）
   if (id) {
+    // 更新用户
     const payload = omitEmptyStrings(obj);
     const validated = userUpdateSchema.safeParse(payload);
     if (!validated.success) throw new Error("VALIDATION_FAILED");
     return await saveUserService(validated.data, id);
+  } else {
+    // 创建用户
+    const validated = userCreateSchema.safeParse(obj);
+    if (!validated.success) throw new Error("VALIDATION_FAILED");
+    return await saveUserService(validated.data);
   }
-
-  const validated = userCreateSchema.safeParse(obj);
-  if (!validated.success) throw new Error("VALIDATION_FAILED");
-
-  // 2. 调用 Service
-  return await saveUserService(validated.data);
 }

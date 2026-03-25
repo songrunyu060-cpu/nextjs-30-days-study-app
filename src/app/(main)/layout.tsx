@@ -1,5 +1,6 @@
 import { ThemeToggle } from "@/components/theme/ThemeToggleButton";
 import NavLinks from "@/components/custom/NavLinks";
+import { Suspense } from "react";
 
 export default function MainLayout({
   children,
@@ -13,7 +14,9 @@ export default function MainLayout({
         <NavLinks />
         <ThemeToggle />
       </nav>
-      <main className="p-8 bg-background text-foreground">{children}</main>
+      <main className="p-8 bg-background text-foreground">
+        <Suspense fallback={<div>Loading...</div>}>{children}</Suspense>
+      </main>
     </div>
   );
 }

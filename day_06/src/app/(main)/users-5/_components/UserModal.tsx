@@ -22,7 +22,7 @@ export function UserModal({ editingUser, open, closeHref }: Props) {
   const [state, formAction, isPending] = useActionState(saveUserAction, null);
 
   const isEdit = editingUser != null;
-  const href = closeHref ?? "/users-5";
+  const href = closeHref ?? "/users";
 
   const form = (
     <form action={formAction} className="space-y-5">

@@ -1,12 +1,14 @@
-export const revalidate = 60;
+import { cacheLife } from "next/cache";
 
 async function getBooks() {
   // 模拟一个 3 秒的延迟
-  await new Promise((resolve) => setTimeout(resolve, 3000));
+  await new Promise((resolve) => setTimeout(resolve, 1000));
   return ["Next.js 实战", "React 高级指南", "TypeScript 编程"];
 }
 
 export default async function BooksPage() {
+  "use cache";
+  cacheLife("slowCache");
   const books = await getBooks();
   return (
     <div>

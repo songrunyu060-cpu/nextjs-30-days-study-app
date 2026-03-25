@@ -1,6 +1,25 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // use cache 相关配置
+  cacheComponents: true,
+  cacheLife: {
+    fastCache: {
+      // 缓存失效时间 60秒后缓存不失效 但是会重新发请求
+      revalidate: 60,
+      // 缓存过期时间 300秒后缓存失效
+      stale: 300,
+    },
+    slowCache: {
+      revalidate: 3600, // 1小时
+      stale: 3600 * 24, // 1天
+    },
+    longCache: {
+      revalidate: 3600 * 24, // 1天
+      stale: 3600 * 24 * 7, // 7天
+    },
+  },
+
   experimental: {
     // Router Cache：通过 <Link> 客户端跳转时，缓存的 RSC 结果保留多久（秒）
     staleTimes: {

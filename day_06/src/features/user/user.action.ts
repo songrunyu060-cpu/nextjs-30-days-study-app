@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 
 function revalidateUserViews() {
   revalidatePath("/users");
-  revalidatePath("/users-5");
+  revalidatePath("/users");
 }
 import type { NewUser } from "@/schema";
 import { deleteUser, saveUserService } from "@/features/user/user.service";
@@ -26,7 +26,9 @@ export async function saveUserAction(prevState: any, formData: FormData) {
   try {
     const data = Object.fromEntries(formData);
     const isUpdate = Boolean(
-      data.id !== undefined && data.id !== null && String(data.id).trim() !== "",
+      data.id !== undefined &&
+      data.id !== null &&
+      String(data.id).trim() !== "",
     );
     await saveUserUseCase(data); // 复用逻辑
     revalidateUserViews();

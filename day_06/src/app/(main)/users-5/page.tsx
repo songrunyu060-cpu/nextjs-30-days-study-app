@@ -27,7 +27,7 @@ export default async function UsersPage({ searchParams }: PageProps) {
     ? allUsers.find((u) => u.id === editId)
     : undefined;
 
-  // 是否打开「新增用户」弹窗（URL: /users-5?create=1）
+  // 是否打开「新增用户」弹窗（URL: /users?create=1）
   const createOpen = sp.create !== undefined && String(sp.create).trim() !== "";
   const lower = q.toLowerCase();
   // 获取筛选后的用户
@@ -61,7 +61,7 @@ export default async function UsersPage({ searchParams }: PageProps) {
               </span>
               {!editingUser ? (
                 <Link
-                  href={`/users-5?create=1${q !== "" ? `&q=${encodeURIComponent(q)}` : ""}`}
+                  href={`/users?create=1${q !== "" ? `&q=${encodeURIComponent(q)}` : ""}`}
                   className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
                 >
                   新增用户
@@ -70,7 +70,7 @@ export default async function UsersPage({ searchParams }: PageProps) {
             </div>
 
             <form
-              action="/users-5"
+              action="/users"
               method="get"
               className="mb-6 flex flex-col gap-2 sm:flex-row sm:items-center"
             >
@@ -95,8 +95,8 @@ export default async function UsersPage({ searchParams }: PageProps) {
                   <Link
                     href={
                       Number.isFinite(editId)
-                        ? `/users-5?edit=${editId}`
-                        : "/users-5"
+                        ? `/users?edit=${editId}`
+                        : "/users"
                     }
                     className="inline-flex items-center rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
                   >
@@ -114,17 +114,13 @@ export default async function UsersPage({ searchParams }: PageProps) {
         <UserModal
           editingUser={editingUser}
           open
-          closeHref={
-            q !== "" ? `/users-5?q=${encodeURIComponent(q)}` : "/users-5"
-          }
+          closeHref={q !== "" ? `/users?q=${encodeURIComponent(q)}` : "/users"}
         />
       )}
       {createOpen && (
         <UserModal
           open
-          closeHref={
-            q !== "" ? `/users-5?q=${encodeURIComponent(q)}` : "/users-5"
-          }
+          closeHref={q !== "" ? `/users?q=${encodeURIComponent(q)}` : "/users"}
         />
       )}
     </main>
