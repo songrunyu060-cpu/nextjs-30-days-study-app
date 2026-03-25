@@ -1,29 +1,29 @@
 import Reviews from "@/components/custom/Reviews";
-import { BookListSkeleton } from "@/components/custom/SkeletonCard";
 import { Suspense } from "react";
 
 type PageProps = {
-  params: Promise<{ id: string }>;
+  params: { id: string };
 };
 
-// 1. 模拟一个从数据库读取数据的异步函数
-async function getMockReviews(id: string) {
-  // 故意延迟 3 秒，让你看清 Suspense 的 Loading 状态
-  await new Promise((resolve) => setTimeout(resolve, 3000));
+type Review = { id: number; content: string; author: string };
 
-  return [
-    { id: 1, content: "这本书的架构设计非常有深度！", author: "小王" },
-    { id: 2, content: "Next.js 15 的实践案例很全。", author: "老李" },
-  ];
+export async function generateStaticParams() {
+  return [{ id: "1" }, { id: "2" }]; // 至少给它一个测试数据
 }
 
+async function getReviews(_id: string): Promise<Review[]> {
+  return await new Promise<Review[]>((resolve) => {
+    setTimeout(() => {
+      resolve([
+        { id: 1, content: "这本书的架构设计非常有深度！", author: "小王" },
+        { id: 2, content: "Next.js 15 的实践案例很全。", author: "老李" },
+      ]);
+    }, 3000);
+  });
+}
 export default async function BookDetailPage({ params }: PageProps) {
-  // Next.js 16 必须 await params
-  const { id } = await params;
-
-  // 2. 关键：发起调用但不 await！
-  // 这里的 reviewsPromise 是一个“正在进行中”的承诺
-  const reviewsPromise = getMockReviews(id);
+  const { id } = params;
+  const reviews = getReviews(id);
 
   return (
     <div className="space-y-4">
@@ -31,11 +31,13 @@ export default async function BookDetailPage({ params }: PageProps) {
       <div className="p-6 bg-white border rounded-lg">
         <p>
           当前查看的图书 ID 是：
-          <span className="font-mono text-blue-600">{id}</span>
+          <span className="font-mono">{id}</span>
         </p>
       </div>
-      <Suspense fallback={<BookListSkeleton />}>
-        <Reviews reviewsPromise={reviewsPromise} />
+      <Suspense
+        fallback={<div className="text-sm text-gray-500">评论加载中...</div>}
+      >
+        <Reviews reviewsPromise={reviews} />
       </Suspense>
     </div>
   );

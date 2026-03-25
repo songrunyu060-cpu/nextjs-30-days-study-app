@@ -17,19 +17,18 @@ export default function NavLinks() {
   return (
     <nav className="flex gap-6">
       {links.map((link) => {
-        // 判断当前路由是否匹配
         const isActive = pathname === link.href;
         return (
           <Link
             key={link.href}
             href={link.href}
-            // 预加载是默认开启的，它让跳转瞬间完成
-            prefetch={true}
-            className={`text-sm transition-colors ${
+            prefetch
+            className={cn(
+              "text-sm transition-colors",
               isActive
                 ? "text-blue-600 font-bold underline decoration-2 underline-offset-8"
-                : "text-gray-500 hover:text-blue-400"
-            }`}
+                : "text-gray-500 hover:text-blue-400",
+            )}
           >
             {link.name}
           </Link>

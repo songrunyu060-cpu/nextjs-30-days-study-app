@@ -11,7 +11,9 @@ export default function MainLayout({
     <div>
       <nav className="h-16 border-b flex items-center justify-between px-8 bg-background">
         <div className="font-bold text-xl">全栈图书馆</div>
-        <NavLinks />
+        <Suspense fallback={null}>
+          <NavLinks />
+        </Suspense>
         <ThemeToggle />
       </nav>
       <main className="p-8 bg-background text-foreground">

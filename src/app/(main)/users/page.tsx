@@ -4,7 +4,7 @@ import { UserModal } from "./_components/UserModal";
 import { UserList } from "./_components/UserList";
 
 type PageProps = {
-  searchParams?: { q?: string; edit?: string; create?: string };
+  searchParams?: Promise<{ q?: string; edit?: string; create?: string }>;
 };
 
 export default async function UsersPage({ searchParams }: PageProps) {
