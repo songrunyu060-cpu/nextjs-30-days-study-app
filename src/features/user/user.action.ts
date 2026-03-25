@@ -50,6 +50,6 @@ export async function deleteUserFormAction(formData: FormData) {
   if (!Number.isFinite(id)) return;
   await deleteUser(id);
   revalidateTag("users", "fastCache");
-  // refresh(); // 刷新页面
+  refresh(); // 刷新页面
   // revalidatePath("/users"); // 刷新客户端缓存
 }
