@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import ServerData from "./ServerData";
 
 export default function ClientWrapper({
   children,

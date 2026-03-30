@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useActionState } from "react";
+import { useActionState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { saveUserAction } from "@/features/user/user.action";
 import type { User } from "@/schema";
 import {
@@ -12,36 +13,39 @@ import {
 } from "@/components/ui/dialog";
 
 type Props = {
-  editingUser?: User;
+  editUser?: User | null;
   open: boolean;
   closeHref?: string;
 };
 
-export function UserModal({ editingUser, open, closeHref }: Props) {
+export function UserModal({ editUser, open, closeHref }: Props) {
   const [state, formAction, isPending] = useActionState(saveUserAction, null);
+  const router = useRouter();
 
-  const isEdit = editingUser != null;
+  const isEdit = editUser != null;
   const href = closeHref ?? "/users";
+
+  useEffect(() => {
+    if (state?.success === true && open) {
+      router.replace(href);
+    }
+  }, [state?.success, open, href, router]);
 
   const form = (
     <form action={formAction} className="space-y-5">
-      {editingUser ? (
-        <input type="hidden" name="id" value={editingUser.id} />
-      ) : null}
+      {editUser ? <input type="hidden" name="id" value={editUser.id} /> : null}
 
       <div className="flex items-center justify-between gap-2">
         <p className="text-sm text-gray-600">
-          {editingUser
-            ? `正在编辑：ID ${editingUser.id}`
-            : "填写信息以创建新用户"}
+          {editUser ? `正在编辑：ID ${editUser.id}` : "填写信息以创建新用户"}
         </p>
       </div>
       <div>
         <label className="mb-1.5 block text-sm font-medium">姓名</label>
         <input
-          key={`name-${editingUser?.id ?? "new"}`}
+          key={`name-${editUser?.id ?? "new"}`}
           name="name"
-          defaultValue={editingUser?.name ?? ""}
+          defaultValue={editUser?.name ?? ""}
           placeholder="例如：张三"
           className="w-full rounded-lg border px-4 py-2 outline-none transition-all focus:ring-2 focus:ring-blue-500"
         />
@@ -49,10 +53,10 @@ export function UserModal({ editingUser, open, closeHref }: Props) {
       <div>
         <label className="mb-1.5 block text-sm font-medium">邮箱</label>
         <input
-          key={`email-${editingUser?.id ?? "new"}`}
+          key={`email-${editUser?.id ?? "new"}`}
           name="email"
           type="email"
-          defaultValue={editingUser?.email ?? ""}
+          defaultValue={editUser?.email ?? ""}
           placeholder="zhangsan@example.com"
           className="w-full rounded-lg border px-4 py-2 outline-none transition-all focus:ring-2 focus:ring-blue-500"
         />
