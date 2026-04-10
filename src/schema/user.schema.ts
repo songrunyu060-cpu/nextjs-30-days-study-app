@@ -6,13 +6,15 @@ import { z } from "zod";
 export const userTable = pgTable("User", {
   id: serial("id").primaryKey(),
   email: text("email").notNull().unique(),
-  name: text("name"),
+  passwordHash: text("passwordHash").notNull(),
+  name: text("name").notNull(),
 });
 
 /** 创建用户：Zod（由 drizzle-zod 从表结构生成并细化规则） */
 export const userCreateSchema = createInsertSchema(userTable, {
   email: z.email(),
   name: z.string().min(1).nullable().optional(),
+  passwordHash: z.string().min(8),
 }).omit({ id: true });
 
 /** 更新用户：Zod（由 drizzle-zod 从表结构生成并细化规则） */

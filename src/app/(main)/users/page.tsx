@@ -1,9 +1,10 @@
 import Link from "next/link";
 import { getAllUsers } from "@/features/user/user.service";
-import { UserModal } from "./_components/UserModal";
+import { UserModal } from "./_components/UserModal.client";
 import { UserList } from "./_components/UserList";
 import { searchParamsCache, serialize } from "@/lib/searchParams";
 import { UserFilters } from "./_components/UserFilters.client";
+import { ROUTE_STRING } from "@/constant";
 
 type PageProps = {
   searchParams?: Promise<{ q?: string; edit?: string; create?: string }>;
@@ -26,7 +27,6 @@ export default async function UsersPage({ searchParams }: PageProps) {
         (user) => user.email.includes(q) || (user.name ?? "").includes(q),
       )
     : allUsers;
-
   return (
     <main className="mx-auto max-w-6xl p-8">
       <div className="grid grid-cols-1 gap-12 lg:grid-cols-12">
@@ -40,7 +40,10 @@ export default async function UsersPage({ searchParams }: PageProps) {
                   : `显示 ${filterUsers.length} 位（共 ${allUsers.length} 位）`}
               </span>
               <Link
-                href={`/users?create=true${q !== "" ? `&q=${encodeURIComponent(q)}` : ""}`}
+                href={serialize(ROUTE_STRING.USERS, {
+                  create: true,
+                  q: q ?? "",
+                })}
                 className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
               >
                 新增用户
@@ -56,7 +59,7 @@ export default async function UsersPage({ searchParams }: PageProps) {
         <UserModal
           editUser={isCreate ? null : editUser}
           open
-          closeHref={q !== "" ? `/users?q=${encodeURIComponent(q)}` : "/users"}
+          closeHref={serialize(ROUTE_STRING.USERS, { q: q ?? "" })}
         />
       )}
     </main>

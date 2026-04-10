@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useActionState, useEffect } from "react";
+import { useActionState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { saveUserAction } from "@/features/user/user.action";
 import type { User } from "@/schema";
@@ -11,6 +11,7 @@ import {
   DialogContent,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { toast } from "sonner";
 
 type Props = {
   editUser?: User | null;
@@ -21,6 +22,7 @@ type Props = {
 export function UserModal({ editUser, open, closeHref }: Props) {
   const [state, formAction, isPending] = useActionState(saveUserAction, null);
   const router = useRouter();
+  const lastToastKeyRef = useRef<string | null>(null);
 
   const isEdit = editUser != null;
   const href = closeHref ?? "/users";
@@ -29,7 +31,43 @@ export function UserModal({ editUser, open, closeHref }: Props) {
     if (state?.success === true && open) {
       router.replace(href);
     }
-  }, [state?.success, open, href, router]);
+  }, [state?.success, open]);
+
+  useEffect(() => {
+    const key = JSON.stringify({
+      success: (state as any)?.success,
+      isUpdate: (state as any)?.isUpdate,
+      error: (state as any)?.error,
+      message: (state as any)?.message,
+    });
+    if (lastToastKeyRef.current === key) return;
+    lastToastKeyRef.current = key;
+
+    if ((state as any)?.success === true) {
+      toast.success((state as any)?.isUpdate ? "修改已保存" : "用户创建成功");
+    } else if ((state as any)?.error) {
+      toast.error(String((state as any).error));
+    }
+
+    if ((state as any)?.message) {
+      toast(String((state as any).message));
+    }
+  }, [state]);
+
+  useEffect(() => {
+    const redirectTo = (state as any)?.redirectTo as string | undefined;
+    const delayMs = (state as any)?.redirectDelayMs as number | undefined;
+    if (!redirectTo) return;
+
+    const t = setTimeout(
+      () => {
+        router.replace(redirectTo);
+      },
+      typeof delayMs === "number" ? delayMs : 0,
+    );
+
+    return () => clearTimeout(t);
+  }, [state, router]);
 
   const form = (
     <form action={formAction} className="space-y-5">
@@ -46,7 +84,7 @@ export function UserModal({ editUser, open, closeHref }: Props) {
           key={`name-${editUser?.id ?? "new"}`}
           name="name"
           defaultValue={editUser?.name ?? ""}
-          placeholder="例如：张三"
+          placeholder="请输入姓名"
           className="w-full rounded-lg border px-4 py-2 outline-none transition-all focus:ring-2 focus:ring-blue-500"
         />
       </div>
@@ -57,7 +95,7 @@ export function UserModal({ editUser, open, closeHref }: Props) {
           name="email"
           type="email"
           defaultValue={editUser?.email ?? ""}
-          placeholder="zhangsan@example.com"
+          placeholder="请输入邮箱"
           className="w-full rounded-lg border px-4 py-2 outline-none transition-all focus:ring-2 focus:ring-blue-500"
         />
       </div>
@@ -68,16 +106,6 @@ export function UserModal({ editUser, open, closeHref }: Props) {
       >
         {isPending ? "保存中…" : isEdit ? "保存修改" : "立即创建"}
       </button>
-      {state?.success === true && (
-        <div className="rounded-lg bg-green-50 p-3 text-center text-sm text-green-700">
-          {state.isUpdate ? "✅ 修改已保存" : "✅ 用户创建成功！"}
-        </div>
-      )}
-      {state?.error && (
-        <div className="rounded-lg bg-red-50 p-3 text-center text-sm text-red-700">
-          ❌ {state.error.toString()}
-        </div>
-      )}
     </form>
   );
 
@@ -89,6 +117,7 @@ export function UserModal({ editUser, open, closeHref }: Props) {
         <DialogContent
           className="z-[99999] opacity-100 fixed top-[50%] left-[50%] !translate-x-[-50%] !translate-y-[-50%]"
           showCloseButton={false}
+          aria-describedby={undefined}
         >
           {/* 右上角关闭按钮：关闭时回到 closeHref（清掉 query） */}
           <DialogClose asChild>

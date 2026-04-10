@@ -1,8 +1,9 @@
 "use server";
 
-import { refresh, revalidateTag, revalidatePath } from "next/cache";
+import { refresh, revalidateTag } from "next/cache";
 import { deleteUser } from "@/features/user/user.service";
 import { saveUserUseCase } from "./use-cases";
+import { withAuth } from "@/lib/auth";
 
 // 统一的返回格式
 export type ActionResponse = {
@@ -12,10 +13,10 @@ export type ActionResponse = {
   isUpdate?: boolean;
 };
 
-/**
- * 保存用户
- */
-export async function saveUserAction(prevState: any, formData: FormData) {
+async function saveUserActionCore(
+  prevState: any,
+  formData: FormData,
+): Promise<ActionResponse> {
   try {
     const data = Object.fromEntries(formData);
     const isUpdate = Boolean(
@@ -23,18 +24,9 @@ export async function saveUserAction(prevState: any, formData: FormData) {
       data.id !== null &&
       String(data.id).trim() !== "",
     );
-    await saveUserUseCase(data); // 复用逻辑
-    // 刷新缓存
-    /* 
-      为什么只写 revalidateTag("users", "fastCache") 页面不更新
-      因为它做的是 “让服务器端缓存失效”，不是 “让当前浏览器立刻重新请求并重新渲染”。
-      refresh() 会 “让当前浏览器立刻重新请求并重新渲染”。
-      让“当前这个用户”立刻看到最新数据：需要额外触发一次客户端重新取数，
-      常用就是 refresh()（它只影响当前触发 action 的这个客户端，不影响其他用户）。
-    */
-    revalidateTag("users", "fastCache"); // 只是刷新了数据缓存 并没有刷新页面
+    await saveUserUseCase(data);
+    revalidateTag("users", "fastCache");
     refresh();
-    // refresh(); // 刷新页面
     return { success: true, isUpdate };
   } catch (e: unknown) {
     if (e instanceof Error && e.message === "VALIDATION_FAILED") {
@@ -44,12 +36,20 @@ export async function saveUserAction(prevState: any, formData: FormData) {
   }
 }
 
-/** 渐进增强：纯 <form action> 即可删除，无需客户端 JS */
-export async function deleteUserFormAction(formData: FormData) {
+/** 保存用户 */
+export const saveUserAction = withAuth(saveUserActionCore, {
+  redirectTo: "/login?callbackUrl=%2Fusers",
+});
+
+async function deleteUserFormActionCore(formData: FormData) {
   const id = Number(formData.get("id"));
   if (!Number.isFinite(id)) return;
   await deleteUser(id);
   revalidateTag("users", "fastCache");
-  refresh(); // 刷新页面
-  // revalidatePath("/users"); // 刷新客户端缓存
+  refresh();
 }
+
+/** 渐进增强：纯 <form action> 即可删除 */
+export const deleteUserFormAction = withAuth(deleteUserFormActionCore, {
+  redirectTo: "/login?callbackUrl=%2Fusers",
+});

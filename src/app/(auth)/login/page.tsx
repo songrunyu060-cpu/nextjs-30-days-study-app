@@ -7,6 +7,7 @@ import { Eye, EyeOff, Mail, Lock, BookOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { signIn } from "next-auth/react";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -19,12 +20,16 @@ export default function LoginPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
-
-    // Simulate login
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    // Redirect to dashboard
-    router.push("/dashboard");
+    const result = await signIn("credentials", {
+      email: formData.email,
+      password: formData.password,
+      redirect: false,
+    });
+    if (result?.error) {
+      console.error(result?.error);
+    } else {
+      router.push("/dashboard");
+    }
   };
 
   return (

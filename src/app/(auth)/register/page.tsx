@@ -2,30 +2,15 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { Eye, EyeOff, Mail, Lock, User, Check, BookOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
-
-const passwordRequirements = [
-  { id: "length", label: "至少 8 个字符", test: (p: string) => p.length >= 8 },
-  {
-    id: "uppercase",
-    label: "包含大写字母",
-    test: (p: string) => /[A-Z]/.test(p),
-  },
-  {
-    id: "lowercase",
-    label: "包含小写字母",
-    test: (p: string) => /[a-z]/.test(p),
-  },
-  { id: "number", label: "包含数字", test: (p: string) => /\d/.test(p) },
-];
+import { registerAction } from "@/features/auth/register.action";
+import { passwordRequirements } from "@/schema/register.schema";
 
 export default function RegisterPage() {
-  const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -36,20 +21,23 @@ export default function RegisterPage() {
     confirmPassword: "",
   });
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
     if (formData.password !== formData.confirmPassword) {
       return;
     }
-
     setIsLoading(true);
-
-    // Simulate registration
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-
-    // Redirect to dashboard
-    router.push("/");
+    try {
+      const result = await registerAction(
+        undefined,
+        new FormData(e.currentTarget),
+      );
+      if (result && "error" in result) {
+        return;
+      }
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const passwordsMatch =
@@ -80,6 +68,7 @@ export default function RegisterPage() {
             <User className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
             <Input
               id="name"
+              name="name"
               type="text"
               placeholder="请输入用户名"
               className="pl-10 h-11"
@@ -98,6 +87,7 @@ export default function RegisterPage() {
             <Mail className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
             <Input
               id="email"
+              name="email"
               type="email"
               placeholder="请输入邮箱地址"
               className="pl-10 h-11"
@@ -116,6 +106,7 @@ export default function RegisterPage() {
             <Lock className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
             <Input
               id="password"
+              name="password"
               type={showPassword ? "text" : "password"}
               placeholder="创建密码"
               className="pl-10 pr-10 h-11"
@@ -173,6 +164,7 @@ export default function RegisterPage() {
             <Lock className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
             <Input
               id="confirmPassword"
+              name="confirmPassword"
               type={showConfirmPassword ? "text" : "password"}
               placeholder="再次输入密码"
               className={cn(

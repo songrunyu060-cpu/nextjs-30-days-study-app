@@ -1,22 +1,23 @@
 import { saveUserUseCase } from "@/features/user/use-cases";
 import { getAllUsers } from "@/features/user/user.service";
+import { badRequestJson } from "@/lib/http-json";
+import { withAuth } from "@/lib/auth";
 
-export async function POST(req: Request) {
+export const POST = withAuth(async (req) => {
   try {
     const json = await req.json();
-    const user = await saveUserUseCase(json); // 复用同一个逻辑
-
-    return Response.json(user); // API 特有的返回方式
-  } catch (e) {
-    return Response.json({ error: "API 格式的错误" }, { status: 400 });
+    const user = await saveUserUseCase(json);
+    return Response.json({ data: user });
+  } catch {
+    return badRequestJson("API 格式的错误");
   }
-}
+});
 
-export async function GET(req: Request) {
-  try {
-    const users = await getAllUsers();
-    return Response.json(users);
-  } catch (e) {
-    return Response.json({ error: "API 格式的错误" }, { status: 400 });
-  }
-}
+export const GET = withAuth(async () => {
+  const users = await getAllUsers();
+  const data = users.map((user) => {
+    const { passwordHash, ...userWithoutPassword } = user;
+    return userWithoutPassword;
+  });
+  return Response.json({ data });
+});

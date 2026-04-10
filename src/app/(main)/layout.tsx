@@ -2,6 +2,7 @@ import { ThemeToggle } from "@/components/theme/ThemeToggleButton";
 import NavLinks from "@/components/custom/NavLinks";
 import { Suspense } from "react";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
+import Logout from "@/components/Logout";
 
 export default function MainLayout({
   children,
@@ -16,6 +17,7 @@ export default function MainLayout({
           <NavLinks />
         </Suspense>
         <ThemeToggle />
+        <Logout />
       </nav>
       <main className="p-8 bg-background text-foreground">
         <Suspense fallback={null}>
